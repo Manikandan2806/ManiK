@@ -1,0 +1,152 @@
+Form backend codes
+
+from django.db import models
+
+class AccessManagement(models.Model):
+    FIRST_NAME = models.CharField(max_length=100)
+    LAST_NAME = models.CharField(max_length=100)
+
+    # Dropdown fields
+    LOCATION_TYPE_CHOICES = [
+        ('Head Office', 'Head Office'),
+        ('Branch', 'Branch'),
+        ('Remote', 'Remote'),
+    ]
+    location_type = models.CharField(max_length=50, choices=LOCATION_TYPE_CHOICES)
+
+    location_text = models.CharField(max_length=100)
+
+    DEPARTMENT_CHOICES = [
+        ('IT', 'IT'),
+        ('HR', 'HR'),
+        ('Finance', 'Finance'),
+        ('Operations', 'Operations'),
+    ]
+    department = models.CharField(max_length=50, choices=DEPARTMENT_CHOICES)
+
+    DESIGNATION_CHOICES = [
+        ('Manager', 'Manager'),
+        ('Engineer', 'Engineer'),
+        ('Consultant', 'Consultant'),
+    ]
+    designation = models.CharField(max_length=50, choices=DESIGNATION_CHOICES)
+
+    doj = models.DateField()  # Date of joining
+    validity_period = models.IntegerField()  # Validity Period (Months)
+
+    mobile_no = models.CharField(max_length=15)
+    reporting_manager = models.EmailField()
+
+    VENDOR_CHOICES = [
+        ('Vendor A', 'Vendor A'),
+        ('Vendor B', 'Vendor B'),
+    ]
+    vendor_name = models.CharField(max_length=50, choices=VENDOR_CHOICES)
+
+    NATIONALITY_CHOICES = [
+        ('Indian', 'Indian'),
+        ('US', 'US'),
+        ('UK', 'UK'),
+    ]
+    nationality = models.CharField(max_length=50, choices=NATIONALITY_CHOICES)
+
+    CATEGORY_CHOICES = [
+        ('Permanent', 'Permanent'),
+        ('Contract', 'Contract'),
+    ]
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+
+    piflow_input_flow = models.BooleanField(default=False)
+    date = models.DateField()
+    proof_upload = models.FileField(upload_to='uploads/')
+
+    def __str__(self):
+        return f'{self.FIRST_NAME} {self.LAST_NAME}'
+
+form.py
+from django import forms
+from .models import AccessManagement
+
+class AccessManagementForm(forms.ModelForm):
+    class Meta:
+        model = AccessManagement
+        fields = '__all__'
+        widgets = {
+            'doj': forms.DateInput(attrs={'type': 'date'}),
+            'validity_period': forms.NumberInput(),
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'piflow_input_flow': forms.Select(choices=[('yes', 'Yes'), ('no', 'No')]),
+            'proof_upload': forms.FileInput(),
+        }
+
+View.py
+
+from django.shortcuts import render, redirect
+from .forms import AccessManagementForm
+
+def access_management_create(request):
+    if request.method == 'POST':
+        form = AccessManagementForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('success')  # Redirect to success page or another view
+    else:
+        form = AccessManagementForm()
+    
+    return render(request, 'access_management_form.html', {'form': form})
+
+def success(request):
+    return render(request, 'success.html')
+
+urls.py
+
+from django.shortcuts import render, redirect
+from .forms import AccessManagementForm
+
+def access_management_create(request):
+    if request.method == 'POST':
+        form = AccessManagementForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('success')  # Redirect to success page or another view
+    else:
+        form = AccessManagementForm()
+    
+    return render(request, 'access_management_form.html', {'form': form})
+
+def success(request):
+    return render(request, 'success.html')
+
+ad on to html file
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create Access Management</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'plugins/fontawesome-free/css/all.min.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}" />
+  </head>
+  <body>
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="container-fluid">
+          <h2 class="form-title">Create Access Management</h2>
+          <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+              {{ form.as_p }}
+              <div class="button-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
