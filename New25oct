@@ -102,3 +102,66 @@ def access_management_form(request):
   </body>
 </html>
 
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+    <title>Access Management Report</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Access Management Report</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Date of Joining</th>
+                    <th>Mobile No</th>
+                    <th>Reporting Manager Email</th>
+                    <th>Vendor Name</th>
+                    <th>Nationality</th>
+                    <th>Category</th>
+                    <th>Piflow Input Flow</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                    <tr>
+                        <td>{{ entry.first_name }}</td>
+                        <td>{{ entry.last_name }}</td>
+                        <td>{{ entry.department }}</td>
+                        <td>{{ entry.designation }}</td>
+                        <td>{{ entry.date_of_joining }}</td>
+                        <td>{{ entry.mobile_no }}</td>
+                        <td>{{ entry.reporting_manager_email }}</td>
+                        <td>{{ entry.vendor_name }}</td>
+                        <td>{{ entry.nationality }}</td>
+                        <td>{{ entry.category }}</td>
+                        <td>{{ entry.piflow_input_flow }}</td>
+                        <td>{{ entry.date }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="12">No data available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+</body>
+</html>
+
