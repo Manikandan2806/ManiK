@@ -1,0 +1,104 @@
+from django.db import models
+
+class AccessManagement(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    location_type = models.CharField(max_length=100)
+    location_text = models.CharField(max_length=100)
+    department = models.CharField(max_length=100)
+    designation = models.CharField(max_length=100)
+    date_of_joining = models.DateField()
+    validity_period = models.IntegerField()
+    mobile_no = models.CharField(max_length=15)
+    reporting_manager_email = models.EmailField()
+    vendor_name = models.CharField(max_length=100)
+    nationality = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    piflow_input_flow = models.CharField(max_length=3, choices=[('yes', 'Yes'), ('no', 'No')])
+    date = models.DateField()
+    proof_upload = models.FileField(upload_to='proofs/')
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+from django import forms
+from .models import AccessManagement
+
+class AccessManagementForm(forms.ModelForm):
+    class Meta:
+        model = AccessManagement
+        fields = '__all__'  # This will include all fields in the form
+
+
+from django.shortcuts import render, redirect
+from .forms import AccessManagementForm
+
+def access_management_form(request):
+    if request.method == 'POST':
+        form = AccessManagementForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('success')  # Redirect to a success page
+    else:
+        form = AccessManagementForm()
+    
+    return render(request, 'form_page.html', {'form': form})
+
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+
+    <title>Automatapi | Access Management</title>
+
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="{% static 'plugins/fontawesome-free/css/all.min.css' %}"
+    />
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}" />
+    <!-- Google Font: Source Sans Pro -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* (Your existing CSS styles go here) */
+    </style>
+  </head>
+  <body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+      <!-- Main Content -->
+      <div class="content-wrapper">
+        <div class="content">
+          <div class="container-fluid">
+            <div class="form-section">
+              <h2 class="form-title">Access Management (Create Activity)</h2>
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="button-group">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+  </body>
+</html>
+
