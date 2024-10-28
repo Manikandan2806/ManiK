@@ -16,3 +16,35 @@ CREATE TABLE AccessManagement (
     piflow_input_flow NVARCHAR(3) CHECK (piflow_input_flow IN ('yes', 'no')), -- Restrict values to 'yes' or 'no'
     proof_upload VARBINARY(MAX) -- For file upload; stores binary data
 );
+
+from django.shortcuts import render, redirect
+from .forms import AccessManagementForm
+from .models import AccessManagement
+
+def access_management_view(request):
+    if request.method == 'POST':
+        form = AccessManagementForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Save form data to the database
+            AccessManagement.objects.create(
+                first_name=form.cleaned_data['first_name'],
+                last_name=form.cleaned_data['last_name'],
+                location_type=form.cleaned_data['location_type'],
+                location_text=form.cleaned_data['location_text'],
+                department=form.cleaned_data['department'],
+                designation=form.cleaned_data['designation'],
+                date_of_joining=form.cleaned_data['date_of_joining'],
+                validity_period=form.cleaned_data['validity_period'],
+                mobile_no=form.cleaned_data['mobile_no'],
+                reporting_manager=form.cleaned_data['reporting_manager'],
+                vendor_name=form.cleaned_data['vendor_name'],
+                nationality=form.cleaned_data['nationality'],
+                category=form.cleaned_data['category'],
+                piflow_input_flow=form.cleaned_data['piflow_input_flow'],
+                proof_upload=form.cleaned_data['proof_upload']
+            )
+            return redirect('success')
+    else:
+        form = AccessManagementForm()
+
+    return render(request, 'form_page.html', {'form': form})
