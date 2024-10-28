@@ -1,0 +1,18 @@
+CREATE TABLE AccessManagement (
+    id INT PRIMARY KEY IDENTITY(1,1), -- Primary key with auto-increment
+    first_name NVARCHAR(100) NOT NULL,
+    last_name NVARCHAR(100) NOT NULL,
+    location_type NVARCHAR(100) NOT NULL,
+    location_text NVARCHAR(100) NOT NULL,
+    department NVARCHAR(100) NOT NULL,
+    designation NVARCHAR(100) NOT NULL,
+    date_of_joining DATE NOT NULL,
+    validity_period INT NOT NULL,
+    mobile_no NVARCHAR(15) NOT NULL,
+    reporting_manager NVARCHAR(255) NOT NULL,
+    vendor_name NVARCHAR(100) NOT NULL,
+    nationality NVARCHAR(100) NOT NULL,
+    category NVARCHAR(100) NOT NULL,
+    piflow_input_flow NVARCHAR(3) CHECK (piflow_input_flow IN ('yes', 'no')), -- Restrict values to 'yes' or 'no'
+    proof_upload VARBINARY(MAX) -- For file upload; stores binary data
+);
