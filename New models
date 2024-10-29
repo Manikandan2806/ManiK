@@ -1,0 +1,25 @@
+from django.db import models
+
+class AccessManagement(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    location_type = models.CharField(max_length=100)
+    location_text = models.CharField(max_length=100)
+    department = models.CharField(max_length=100)
+    designation = models.CharField(max_length=100)
+    date_of_joining = models.DateField()
+    validity_period = models.IntegerField()
+    mobile_no = models.CharField(max_length=15)
+    reporting_manager_email = models.EmailField()
+    vendor_name = models.CharField(max_length=100)
+    nationality = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    piflow_input_flow = models.CharField(max_length=3, choices=[('yes', 'Yes'), ('no', 'No')])
+    date = models.DateField()
+    proof_upload = models.FileField(upload_to='proofs/')
+
+    class Meta:
+        db_table = 'access_management_accessmanagement'  # Specify exact table name
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
