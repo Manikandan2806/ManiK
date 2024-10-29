@@ -17,53 +17,70 @@ CREATE TABLE AccessManagement (
     proof_upload VARBINARY(MAX) -- For file upload; stores binary data
 );
 
-from django.shortcuts import render, redirect
-from .forms import AccessManagementForm
-from .models import AccessManagement
 
-def access_management_view(request):
-    if request.method == 'POST':
-        form = AccessManagementForm(request.POST, request.FILES)
-        if form.is_valid():
-            # Save form data to the database
-            AccessManagement.objects.create(
-                first_name=form.cleaned_data['first_name'],
-                last_name=form.cleaned_data['last_name'],
-                location_type=form.cleaned_data['location_type'],
-                location_text=form.cleaned_data['location_text'],
-                department=form.cleaned_data['department'],
-                designation=form.cleaned_data['designation'],
-                date_of_joining=form.cleaned_data['date_of_joining'],
-                validity_period=form.cleaned_data['validity_period'],
-                mobile_no=form.cleaned_data['mobile_no'],
-                reporting_manager=form.cleaned_data['reporting_manager'],
-                vendor_name=form.cleaned_data['vendor_name'],
-                nationality=form.cleaned_data['nationality'],
-                category=form.cleaned_data['category'],
-                piflow_input_flow=form.cleaned_data['piflow_input_flow'],
-                proof_upload=form.cleaned_data['proof_upload']
-            )
-            return redirect('success')
-    else:
-        form = AccessManagementForm()
-
-    return render(request, 'form_page.html', {'form': form})
-
-
-# forms.py
 from django import forms
 from .models import AccessManagement
 
 class AccessManagementForm(forms.ModelForm):
+    location_type_choices = [
+        ('associate resort', 'Associate Resort'),
+        ('branch', 'Branch'),
+        ('corporate', 'Corporate'),
+        ('dsa', 'DSA'),
+        ('resort', 'Resort')
+    ]
+    location_text_choices = {
+        'associate resort': [('associate resort', 'Associate Resort')],
+        'branch': [
+            ('ahmedabad', 'Ahmedabad'),
+            ('bangalore - cunnigham road', 'Bangalore - Cunnigham Road'),
+            ('bangalore - koramangala', 'Bangalore - Koramangala'),
+            ('bhopal', 'Bhopal'),
+            ('chandigarh', 'Chandigarh')
+        ],
+        'corporate': [
+            ('chennai', 'Chennai'),
+            ('cor-mumbai', 'Cor-Mumbai'),
+            ('corporate', 'Corporate')
+        ],
+        'dsa': [
+            ('ahmedabad', 'Ahmedabad'),
+            ('bangalore - cunnigham road', 'Bangalore - Cunnigham Road'),
+            ('bangalore - koramangala', 'Bangalore - Koramangala'),
+            ('bhopal', 'Bhopal'),
+            ('chandigarh', 'Chandigarh')
+        ],
+        'resort': [
+            ('acacia', 'Acacia'),
+            ('alibaug', 'Alibaug'),
+            ('alleppy', 'Alleppy'),
+            ('arrokutty', 'Arrokutty')
+        ]
+    }
+
+    location_type = forms.ChoiceField(choices=location_type_choices, label="Location Type")
+    location_text = forms.ChoiceField(choices=[], label="Location Text")  # Dynamically populated based on location_type
+
     class Meta:
         model = AccessManagement
-        fields = [
-            'first_name', 'last_name', 'location_type', 'location_text', 
-            'department', 'designation', 'date_of_joining', 'validity_period', 
-            'mobile_no', 'reporting_manager', 'vendor_name', 'nationality', 
-            'piflow_input_flow', 'proof_upload'
-        ]
-        widgets = {
-            'date_of_joining': forms.SelectDateWidget(),
-            'proof_upload': forms.FileInput(),
-        }
+        fields = '__all__'  # Or specify fields explicitly if needed
+
+    def __init__(self, *args, **kwargs):
+        # Handle 'initial' argument if it's passed, as well as other arguments
+        initial = kwargs.pop('initial', {})
+        super().__init__(*args, **kwargs)
+        
+        # Retrieve the initial value of location_type if provided
+        location_type = initial.get('location_type', self.initial.get('location_type'))
+        
+        # Populate the location_text choices based on the initial location_type
+        if location_type and location_type in self.location_text_choices:
+            self.fields['location_text'].choices = self.location_text_choices[location_type]
+        else:
+            self.fields['location_text'].choices = []
+
+        # Update location_text choices on form data if the form is re-rendered (e.g., after a POST)
+        if 'location_type' in self.data:
+            selected_location_type = self.data.get('location_type')
+            self.fields['location_text'].choices = self.location_text_choices.get(selected_location_type, [])
+    
