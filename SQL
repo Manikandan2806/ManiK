@@ -21,3 +21,5 @@ CREATE TABLE AccessManagement (
 django.db.utils.ProgrammingError: ('42000', "[42000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]No item by the name of 'access_management_accessmanagement' could be found in the current database 'AMPI_AccessManagement', given that @itemtype was input as '(null)'. (15225) (SQLExecDirectW)")
 
 django.db.utils.ProgrammingError: ('42S02', "[42S02] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Invalid object name 'AccessManagement'. (208) (SQLExecDirectW)")
+
+django.db.utils.DataError: ('22003', "[22003] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]The conversion of the nvarchar value '08817253478' overflowed an int column. (248) (SQLExecDirectW); [22003] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]The statement has been terminated. (3621)")
