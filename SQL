@@ -26,3 +26,20 @@ django.db.utils.DataError: ('22003', "[22003] [Microsoft][ODBC Driver 17 for SQL
 
 
 opqd wqkf polr xrqc
+
+# mailer/views.py
+from django.core.mail import send_mail
+from django.http import HttpResponse
+
+def send_email(request):
+    subject = "Test Email"
+    message = "Hello, this is a test email sent from Django!"
+    from_email = 'your_email@gmail.com'
+    recipient_list = ['recipient_email@example.com']
+
+    try:
+        send_mail(subject, message, from_email, recipient_list)
+        return HttpResponse("Email sent successfully.")
+    except Exception as e:
+        return HttpResponse(f"Failed to send email. Error: {e}")
+
